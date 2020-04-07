@@ -23,8 +23,8 @@
 		D4A4EA4E24370CB1001404AC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D4A4EA4D24370CB1001404AC /* Assets.xcassets */; };
 		D4A4EA5124370CB1001404AC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D4A4EA4F24370CB1001404AC /* LaunchScreen.storyboard */; };
 		D4A4EA5C24370CB1001404AC /* RSATests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4A4EA5B24370CB1001404AC /* RSATests.swift */; };
-		D4A4EA6524370CD9001404AC /* RSA.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4A4EA6424370CD9001404AC /* RSA.swift */; };
-		D4A4EA6924373058001404AC /* RSA_Copy.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4A4EA6824373058001404AC /* RSA_Copy.swift */; };
+		D4A4EA6524370CD9001404AC /* RSA3rd.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4A4EA6424370CD9001404AC /* RSA3rd.swift */; };
+		D4A4EA6924373058001404AC /* RSA.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4A4EA6824373058001404AC /* RSA.swift */; };
 		DF94C199C7C1E021BD8AD7A1 /* Pods_RSATests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 997EA4C490AE4355B9F25707 /* Pods_RSATests.framework */; };
 /* End PBXBuildFile section */
 
@@ -73,8 +73,8 @@
 		D4A4EA5724370CB1001404AC /* RSATests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RSATests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D4A4EA5B24370CB1001404AC /* RSATests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RSATests.swift; sourceTree = "<group>"; };
 		D4A4EA5D24370CB1001404AC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		D4A4EA6424370CD9001404AC /* RSA.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RSA.swift; sourceTree = "<group>"; };
-		D4A4EA6824373058001404AC /* RSA_Copy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RSA_Copy.swift; sourceTree = "<group>"; };
+		D4A4EA6424370CD9001404AC /* RSA3rd.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RSA3rd.swift; sourceTree = "<group>"; };
+		D4A4EA6824373058001404AC /* RSA.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RSA.swift; sourceTree = "<group>"; };
 		DA46211B9E8725957B605145 /* Pods-RSATests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RSATests.debug.xcconfig"; path = "Target Support Files/Pods-RSATests/Pods-RSATests.debug.xcconfig"; sourceTree = "<group>"; };
 		E0A078C0C147EF9469E60C42 /* Pods-RSA.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RSA.debug.xcconfig"; path = "Target Support Files/Pods-RSA/Pods-RSA.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -173,8 +173,8 @@
 		D4A4EA4324370CAE001404AC /* RSA */ = {
 			isa = PBXGroup;
 			children = (
-				D4A4EA6424370CD9001404AC /* RSA.swift */,
-				D4A4EA6824373058001404AC /* RSA_Copy.swift */,
+				D4A4EA6424370CD9001404AC /* RSA3rd.swift */,
+				D4A4EA6824373058001404AC /* RSA.swift */,
 				D4A4EA4424370CAE001404AC /* AppDelegate.swift */,
 				D4A4EA4624370CAE001404AC /* SceneDelegate.swift */,
 				D4A4EA4824370CAE001404AC /* ViewController.swift */,
@@ -456,9 +456,9 @@
 			files = (
 				D4A4EA4924370CAE001404AC /* ViewController.swift in Sources */,
 				D4A4EA4524370CAE001404AC /* AppDelegate.swift in Sources */,
-				D4A4EA6524370CD9001404AC /* RSA.swift in Sources */,
+				D4A4EA6524370CD9001404AC /* RSA3rd.swift in Sources */,
 				D4A4EA4724370CAE001404AC /* SceneDelegate.swift in Sources */,
-				D4A4EA6924373058001404AC /* RSA_Copy.swift in Sources */,
+				D4A4EA6924373058001404AC /* RSA.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

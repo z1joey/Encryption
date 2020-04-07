@@ -1,5 +1,5 @@
 //
-//  RSA_Copy.swift
+//  RSA.swift
 //  RSA
 //
 //  Created by joey on 4/3/20.
@@ -8,38 +8,61 @@
 
 import Foundation
 
-@available(*, deprecated)
-struct RSA_Copy {
-    static func encrypt(string: String, publicKey: String?) -> String? {
-        guard let publicKey = publicKey else { return nil }
-        guard let data = Data(base64Encoded: publicKey) else { return nil }
+//@available(*, deprecated)
+struct RSA {
+    private var padding: SecPadding = .PKCS1
 
-        var attributes: CFDictionary {
-            return [
-                kSecAttrKeyType            : kSecAttrKeyTypeRSA,
-                kSecAttrKeyClass           : kSecAttrKeyClassPublic,
-                kSecAttrKeySizeInBits     : 1024,
-                // kSecReturnPersistentRef : kCFBooleanTrue
-                ] as CFDictionary
-        }
-
-        var error: Unmanaged<CFError>? = nil
-        guard let secKey = SecKeyCreateWithData(data as CFData, attributes, &error) else {
-            print(error.debugDescription)
-            return nil
-        }
-        return encrypt(string: string, publicKey: secKey)
+    init(padding: SecPadding = .PKCS1) {
+        self.padding = padding
     }
 
-    static func decrypt(string: String, privateKey: String?) -> String? {
-        guard let privateKey = privateKey else { return nil }
-        guard let data = Data(base64Encoded: privateKey, options: .init(rawValue: 0)) else { return nil }
+    func encrypt(_ string: String, publicKey: String, sizeInBits size: KeySize = .bits2048) -> String? {
+        guard let secKey = generateSecureKey(keyString: publicKey, sizeInBits: size) else { return nil }
+
+        return encrypt(string, publicKey: secKey)
+    }
+
+    func decrypt(_ base64String: String, privateKey: String, sizeInBits size: KeySize = .bits2048) -> String? {
+        guard let secKey = generateSecureKey(keyString: privateKey, sizeInBits: size) else { return nil }
+
+        return decrypt(base64String, privateKey: secKey)
+    }
+
+    func encrypt(_ string: String, publicKey: SecKey) -> String? {
+          var keySize   = SecKeyGetBlockSize(publicKey)
+          var keyBuffer = [UInt8](repeating: 0, count: keySize)
+
+          // Encrypto  should less than key length
+          guard SecKeyEncrypt(publicKey, padding, string, string.count, &keyBuffer, &keySize) == errSecSuccess else {
+              debugPrint("Error: failed to encrypt")
+              return nil
+          }
+
+          return Data(bytes: keyBuffer, count: keySize).base64EncodedString()
+      }
+
+    func decrypt(_ base64String: String, privateKey: SecKey) -> String? {
+          let buffer = [UInt8](base64String.utf8)
+
+          var keySize   = SecKeyGetBlockSize(privateKey)
+          var keyBuffer = [UInt8](repeating: 0, count: keySize)
+
+          guard SecKeyDecrypt(privateKey, padding, buffer, buffer.count, &keyBuffer, &keySize) == errSecSuccess else {
+              debugPrint("Error: failed to decrypt")
+              return nil
+          }
+
+          return String(bytes: Data(bytes: keyBuffer, count: keySize), encoding: .utf8)
+      }
+}
+
+// MARK: - Factory
+extension RSA {
+    func generateSecureKey(keyString: String, sizeInBits size: KeySize) -> SecKey? {
+        guard let data = Data(base64Encoded: keyString) else { return nil }
 
         var attributes: CFDictionary {
-            return [
-                kSecAttrKeyType            : kSecAttrKeyTypeRSA,
-                kSecAttrKeyClass           : kSecAttrKeyClassPrivate,
-                kSecAttrKeySizeInBits     : 1024] as CFDictionary
+            return [kSecAttrKeyType: kSecAttrKeyTypeRSA, kSecAttrKeyClass: kSecAttrKeyClassPrivate, kSecAttrKeySizeInBits: size.rawValue] as CFDictionary
         }
 
         var error: Unmanaged<CFError>? = nil
@@ -47,31 +70,41 @@ struct RSA_Copy {
             print(error.debugDescription)
             return nil
         }
-        return decrypt(string: string, privateKey: secKey)
+
+        return secKey
+    }
+
+    func generateKeyPair(keySize: KeySize) -> KeyPair? {
+        var publicKeyBuffer, privateKeyBuffer: SecKey?
+
+        var parameters: CFDictionary {
+            return [kSecAttrKeyType: kSecAttrKeyTypeRSA, kSecAttrKeySizeInBits: keySize.rawValue] as CFDictionary
+        }
+
+        guard SecKeyGeneratePair(parameters, &publicKeyBuffer, &privateKeyBuffer) == errSecSuccess else {
+            debugPrint("Error: failed to generate RSA key pair")
+            return nil
+        }
+        guard let publicKey = publicKeyBuffer, let privateKey = privateKeyBuffer else {
+            debugPrint("Error: failed to generate RSA key pair")
+            return nil
+        }
+
+        return KeyPair(privateKey: privateKey, publicKey: publicKey)
     }
 }
 
-// MARK: - Helper
-@available(*, deprecated)
-private extension RSA_Copy {
-    static func encrypt(string: String, publicKey: SecKey) -> String? {
-        let buffer = [UInt8](string.utf8)
-
-        var keySize   = SecKeyGetBlockSize(publicKey)
-        var keyBuffer = [UInt8](repeating: 0, count: keySize)
-
-        // Encrypto  should less than key length
-        guard SecKeyEncrypt(publicKey, SecPadding.PKCS1, buffer, buffer.count, &keyBuffer, &keySize) == errSecSuccess else { return nil }
-        return Data(bytes: keyBuffer, count: keySize).base64EncodedString()
+// MARK: - Define
+extension RSA {
+    struct KeyPair {
+        let privateKey: SecKey
+        let publicKey: SecKey
     }
 
-    static func decrypt(string: String, privateKey: SecKey) -> String? {
-        let buffer = [UInt8](string.utf8)
-
-        var keySize   = SecKeyGetBlockSize(privateKey)
-        var keyBuffer = [UInt8](repeating: 0, count: keySize)
-
-        guard SecKeyDecrypt(privateKey, .PKCS1, buffer, buffer.count, &keyBuffer, &keySize) == errSecSuccess else { return nil }
-        return String(bytes: Data(bytes: keyBuffer, count: keySize), encoding: .utf8)
+    enum KeySize: Int {
+        case bits515 = 515
+        case bits2048 = 2048
+        case bits3072 = 3072
+        case bits4096 = 4096
     }
 }

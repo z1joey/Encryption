@@ -7,77 +7,91 @@
 //
 
 import Foundation
-import SwiftyRSA
 
 struct RSA {
-    private var padding: Padding = .PKCS1
+    static func encrypt(_ string: String, publicKey: String, sizeInBits size: KeySize = .bits2048) -> String? {
+        guard let secKey = generateSecureKey(keyString: publicKey, sizeInBits: size) else { return nil }
 
-    init(padding: Padding = .PKCS1) {
-        self.padding = padding
+        return encrypt(string, publicKey: secKey)
     }
 
-    func encrypt(string: String, publicKey: String) -> String? {
-        if let encryptedData: Data = encrypt(string: string, publicKey: publicKey) {
-            return encryptedData.base64EncodedString()
-        }
-        return nil
+    static func decrypt(_ base64String: String, privateKey: String, sizeInBits size: KeySize = .bits2048) -> String? {
+        guard let secKey = generateSecureKey(keyString: privateKey, sizeInBits: size) else { return nil }
+
+        return decrypt(base64String, privateKey: secKey)
     }
 
-    func decrypt(base64String: String, privateKey: String) -> String? {
-        if let decryptedData: Data = decrypt(base64String: base64String, privateKey: privateKey) {
-            return String(bytes: decryptedData, encoding: .utf8)
-        }
-        return nil
-    }
+    static func encrypt(_ string: String, publicKey: SecKey, padding: SecPadding = .PKCS1) -> String? {
+          var keySize   = SecKeyGetBlockSize(publicKey)
+          var keyBuffer = [UInt8](repeating: 0, count: keySize)
 
-    func generateKeyPair(keySize: KeySize) -> KeyPair? {
-        do {
-            let keyPair = try SwiftyRSA.generateRSAKeyPair(sizeInBits: keySize.rawValue)
-            let privateKey = try keyPair.privateKey.pemString()
-            let publicKey = try keyPair.publicKey.pemString()
+          // Encrypto  should less than key length
+          guard SecKeyEncrypt(publicKey, padding, string, string.count, &keyBuffer, &keySize) == errSecSuccess else {
+              debugPrint("Error: failed to encrypt")
+              return nil
+          }
 
-            return KeyPair(privateKey: privateKey, publicKey: publicKey)
-        } catch let error {
-            debugPrint(error.localizedDescription)
-            return nil
-        }
-    }
+          return Data(bytes: keyBuffer, count: keySize).base64EncodedString()
+      }
+
+    static func decrypt(_ base64String: String, privateKey: SecKey, padding: SecPadding = .PKCS1) -> String? {
+          let buffer = [UInt8](base64String.utf8)
+
+          var keySize   = SecKeyGetBlockSize(privateKey)
+          var keyBuffer = [UInt8](repeating: 0, count: keySize)
+
+          guard SecKeyDecrypt(privateKey, padding, buffer, buffer.count, &keyBuffer, &keySize) == errSecSuccess else {
+              debugPrint("Error: failed to decrypt")
+              return nil
+          }
+
+          return String(bytes: Data(bytes: keyBuffer, count: keySize), encoding: .utf8)
+      }
 }
 
-// MARK: - Crypt
-private extension RSA {
-    func encrypt(string: String, publicKey: String) -> Data? {
-        do {
-            let publicKey = try PublicKey(pemEncoded: publicKey)
-            let clear = try ClearMessage(string: string, using: .utf8)
-            let encrypted = try clear.encrypted(with: publicKey, padding: padding)
+// MARK: - Factory
+extension RSA {
+    static func generateSecureKey(keyString: String, sizeInBits size: KeySize) -> SecKey? {
+        guard let data = Data(base64Encoded: keyString) else { return nil }
 
-            return encrypted.data
-        } catch let error {
-            debugPrint(error.localizedDescription)
+        var attributes: CFDictionary {
+            return [kSecAttrKeyType: kSecAttrKeyTypeRSA, kSecAttrKeyClass: kSecAttrKeyClassPrivate, kSecAttrKeySizeInBits: size.rawValue] as CFDictionary
+        }
+
+        var error: Unmanaged<CFError>? = nil
+        guard let secKey = SecKeyCreateWithData(data as CFData, attributes, &error) else {
+            print(error.debugDescription)
             return nil
         }
+
+        return secKey
     }
 
-    func decrypt(base64String: String, privateKey: String) -> Data? {
-        do {
-            let encrypted = try EncryptedMessage(base64Encoded: base64String)
-            let privateKey = try PrivateKey(pemEncoded: privateKey)
-            let clear = try encrypted.decrypted(with: privateKey, padding: padding)
+    static func generateKeyPair(keySize: KeySize) -> KeyPair? {
+        var publicKeyBuffer, privateKeyBuffer: SecKey?
 
-            return clear.data
-        } catch let error {
-            print(error.localizedDescription)
+        var parameters: CFDictionary {
+            return [kSecAttrKeyType: kSecAttrKeyTypeRSA, kSecAttrKeySizeInBits: keySize.rawValue] as CFDictionary
+        }
+
+        guard SecKeyGeneratePair(parameters, &publicKeyBuffer, &privateKeyBuffer) == errSecSuccess else {
+            debugPrint("Error: failed to generate RSA key pair")
             return nil
         }
+        guard let publicKey = publicKeyBuffer, let privateKey = privateKeyBuffer else {
+            debugPrint("Error: failed to generate RSA key pair")
+            return nil
+        }
+
+        return KeyPair(privateKey: privateKey, publicKey: publicKey)
     }
 }
 
 // MARK: - Define
 extension RSA {
     struct KeyPair {
-        let privateKey: String
-        let publicKey: String
+        let privateKey: SecKey
+        let publicKey: SecKey
     }
 
     enum KeySize: Int {
