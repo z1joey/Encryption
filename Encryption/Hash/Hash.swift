@@ -10,6 +10,10 @@ import Foundation
 import CryptoKit
 
 extension String {
+    func salt() -> String {
+        return self.appending(" the app and server would share the same salt")
+    }
+
     func sha1() -> String {
         let digest = Insecure.SHA1.hash(data: Data(self.utf8))
         return digest.map { String(format: "%02x", $0) }.joined()

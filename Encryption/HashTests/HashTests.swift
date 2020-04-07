@@ -12,6 +12,12 @@ import XCTest
 class HashTests: XCTestCase {
     private let testedString = "This is a secret"
 
+    func testSalt() {
+        let expectedMD5 = "1ea915c217926b9feb0a46dc85bd8a61"
+        let md5 = testedString.salt().md5()
+        XCTAssertEqual(md5, expectedMD5)
+    }
+
     func testSHA1() {
         XCTAssertEqual(testedString.sha1(), sha1)
     }
