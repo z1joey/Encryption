@@ -12,24 +12,30 @@ import XCTest
 class ECCTests: XCTestCase {
     let testedString = "weekend is coming!"
 
+    var storedECCPrivateKey: String = "BDQgLBzxlDLJzp75a5FLxzJGTxlE04ZcoiMTCsf7NOOelMDr6RJKCy0iBn0U4KPVssgZcn2hC+qA6SKxjhlDODU="
+    var storedECCPublicKey: String = "BDQgLBzxlDLJzp75a5FLxzJGTxlE04ZcoiMTCsf7NOOelMDr6RJKCy0iBn0U4KPVssgZcn2hC+qA6SKxjhlDODXIiIa507hpf5G6ETLL+cJ2zdAKA03gO7YZRK7/so0e5Q=="
+
     var privateKey: String? = ""
     var publicKey: String? = ""
 
-    var storedPrivateKey: String = "BDQgLBzxlDLJzp75a5FLxzJGTxlE04ZcoiMTCsf7NOOelMDr6RJKCy0iBn0U4KPVssgZcn2hC+qA6SKxjhlDODU="
-    var storedPublicKey: String = "BDQgLBzxlDLJzp75a5FLxzJGTxlE04ZcoiMTCsf7NOOelMDr6RJKCy0iBn0U4KPVssgZcn2hC+qA6SKxjhlDODXIiIa507hpf5G6ETLL+cJ2zdAKA03gO7YZRK7/so0e5Q=="
-
     override func setUp() {
-        setupKeyPairs()
+        guard  let randomKeyPair = ECC.generateKeyPair() else { return }
+        publicKey = randomKeyPair.publicKey.toString()
+        privateKey = randomKeyPair.privateKey.toString()
+
+        guard publicKey != nil, privateKey != nil else {
+            preconditionFailure("Error: failed to setup key pairs")
+        }
     }
 
     func testEncryption() {
-        guard let encryptedString: String = ECC.encrypt(testedString, publicKey: storedPublicKey) else { return }
-        guard let decryptedString: String = ECC.decrypt(encryptedString, privateKey: storedPrivateKey) else { return }
+        guard let encryptedString: String = ECC.encrypt(testedString, publicKey: storedECCPublicKey) else { return }
+        guard let decryptedString: String = ECC.decrypt(encryptedString, privateKey: storedECCPrivateKey) else { return }
 
         XCTAssert(decryptedString == testedString)
     }
 
-    func testGenerateKeyPairs() {
+    func testKeyPairs() {
         guard let keyPair = ECC.generateKeyPair() else { return }
         let someString = "today is tuesday"
 
@@ -38,16 +44,14 @@ class ECCTests: XCTestCase {
 
         XCTAssert(decryptedString == someString)
     }
-}
 
-extension ECCTests {
-    private func setupKeyPairs() {
-        guard  let randomKeyPair = ECC.generateKeyPair() else { return }
-        publicKey = randomKeyPair.publicKey.toString()
-        privateKey = randomKeyPair.privateKey.toString()
+    func testSignature() {
+        guard let alice = ECC.generateKeyPair(), let bob = ECC.generateKeyPair() else { return }
 
-        guard publicKey != nil, privateKey != nil else {
-            preconditionFailure("Error: failed to setup key pairs")
-        }
+        let aliceSecrect = alice.privateKey.shareSecrect(withPublic: bob.publicKey)
+        let bobSecrect = bob.privateKey.shareSecrect(withPublic: alice.publicKey)
+
+        XCTAssert(aliceSecrect != nil && bobSecrect != nil)
+        XCTAssertEqual(aliceSecrect, bobSecrect)
     }
 }

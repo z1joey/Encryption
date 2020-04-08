@@ -1,5 +1,5 @@
 //
-//  SecrectTests.swift
+//  SignatureTests.swift
 //  ECCTests
 //
 //  Created by joey on 4/8/20.
@@ -9,7 +9,7 @@
 import XCTest
 @testable import ECC
 
-class SecrectTests: XCTestCase {
+class SignatureTests: XCTestCase {
     var bobKeyPair: Secrect.KeyPair?
     var aliceKeyPair: Secrect.KeyPair?
 
@@ -26,7 +26,7 @@ class SecrectTests: XCTestCase {
     }
 }
 
-extension SecrectTests {
+extension SignatureTests {
     private func setupBobAndAlice() {
         bobKeyPair = Secrect.generateKeyPair()
         aliceKeyPair = Secrect.generateKeyPair()
