@@ -33,6 +33,8 @@
 		D4A4EA5C24370CB1001404AC /* RSATests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4A4EA5B24370CB1001404AC /* RSATests.swift */; };
 		D4A4EA6524370CD9001404AC /* RSA3rd.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4A4EA6424370CD9001404AC /* RSA3rd.swift */; };
 		D4A4EA6924373058001404AC /* RSA.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4A4EA6824373058001404AC /* RSA.swift */; };
+		D4D10072243D9BE8008288DA /* ECC.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4D10071243D9BE8008288DA /* ECC.swift */; };
+		D4D10074243DAF91008288DA /* SecrectTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4D10073243DAF91008288DA /* SecrectTests.swift */; };
 		D4D613EB243C82EB00C92866 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4D613EA243C82EB00C92866 /* AppDelegate.swift */; };
 		D4D613ED243C82EB00C92866 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4D613EC243C82EB00C92866 /* SceneDelegate.swift */; };
 		D4D613EF243C82EB00C92866 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4D613EE243C82EB00C92866 /* ViewController.swift */; };
@@ -40,7 +42,7 @@
 		D4D613F4243C82ED00C92866 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D4D613F3243C82ED00C92866 /* Assets.xcassets */; };
 		D4D613F7243C82ED00C92866 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D4D613F5243C82ED00C92866 /* LaunchScreen.storyboard */; };
 		D4D61402243C82EE00C92866 /* ECCTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4D61401243C82EE00C92866 /* ECCTests.swift */; };
-		D4D6140B243C831400C92866 /* ECC.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4D6140A243C831400C92866 /* ECC.swift */; };
+		D4D6140B243C831400C92866 /* AliceAndBob.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4D6140A243C831400C92866 /* AliceAndBob.swift */; };
 		DF94C199C7C1E021BD8AD7A1 /* Pods_RSATests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 997EA4C490AE4355B9F25707 /* Pods_RSATests.framework */; };
 /* End PBXBuildFile section */
 
@@ -117,6 +119,8 @@
 		D4A4EA5D24370CB1001404AC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D4A4EA6424370CD9001404AC /* RSA3rd.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RSA3rd.swift; sourceTree = "<group>"; };
 		D4A4EA6824373058001404AC /* RSA.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RSA.swift; sourceTree = "<group>"; };
+		D4D10071243D9BE8008288DA /* ECC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ECC.swift; sourceTree = "<group>"; };
+		D4D10073243DAF91008288DA /* SecrectTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecrectTests.swift; sourceTree = "<group>"; };
 		D4D613E8243C82EB00C92866 /* ECC.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ECC.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D4D613EA243C82EB00C92866 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D4D613EC243C82EB00C92866 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -128,7 +132,7 @@
 		D4D613FD243C82EE00C92866 /* ECCTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ECCTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D4D61401243C82EE00C92866 /* ECCTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ECCTests.swift; sourceTree = "<group>"; };
 		D4D61403243C82EE00C92866 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		D4D6140A243C831400C92866 /* ECC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ECC.swift; sourceTree = "<group>"; };
+		D4D6140A243C831400C92866 /* AliceAndBob.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AliceAndBob.swift; sourceTree = "<group>"; };
 		DA46211B9E8725957B605145 /* Pods-RSATests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RSATests.debug.xcconfig"; path = "Target Support Files/Pods-RSATests/Pods-RSATests.debug.xcconfig"; sourceTree = "<group>"; };
 		E0A078C0C147EF9469E60C42 /* Pods-RSA.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RSA.debug.xcconfig"; path = "Target Support Files/Pods-RSA/Pods-RSA.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -312,7 +316,8 @@
 		D4D613E9243C82EB00C92866 /* ECC */ = {
 			isa = PBXGroup;
 			children = (
-				D4D6140A243C831400C92866 /* ECC.swift */,
+				D4D6140A243C831400C92866 /* AliceAndBob.swift */,
+				D4D10071243D9BE8008288DA /* ECC.swift */,
 				D4D613EA243C82EB00C92866 /* AppDelegate.swift */,
 				D4D613EC243C82EB00C92866 /* SceneDelegate.swift */,
 				D4D613EE243C82EB00C92866 /* ViewController.swift */,
@@ -328,6 +333,7 @@
 			isa = PBXGroup;
 			children = (
 				D4D61401243C82EE00C92866 /* ECCTests.swift */,
+				D4D10073243DAF91008288DA /* SecrectTests.swift */,
 				D4D61403243C82EE00C92866 /* Info.plist */,
 			);
 			path = ECCTests;
@@ -756,7 +762,8 @@
 				D4D613EF243C82EB00C92866 /* ViewController.swift in Sources */,
 				D4D613EB243C82EB00C92866 /* AppDelegate.swift in Sources */,
 				D4D613ED243C82EB00C92866 /* SceneDelegate.swift in Sources */,
-				D4D6140B243C831400C92866 /* ECC.swift in Sources */,
+				D4D10072243D9BE8008288DA /* ECC.swift in Sources */,
+				D4D6140B243C831400C92866 /* AliceAndBob.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -765,6 +772,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D4D61402243C82EE00C92866 /* ECCTests.swift in Sources */,
+				D4D10074243DAF91008288DA /* SecrectTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

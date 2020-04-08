@@ -10,34 +10,44 @@ import XCTest
 @testable import ECC
 
 class ECCTests: XCTestCase {
-    var bobKeyPair: ECC.KeyPair?
-    var aliceKeyPair: ECC.KeyPair?
+    let testedString = "weekend is coming!"
 
-    var bobSharedSecrect: CFData?
-    var aliceSharedSecrect: CFData?
+    var privateKey: String? = ""
+    var publicKey: String? = ""
+
+    var storedPrivateKey: String = "BDQgLBzxlDLJzp75a5FLxzJGTxlE04ZcoiMTCsf7NOOelMDr6RJKCy0iBn0U4KPVssgZcn2hC+qA6SKxjhlDODU="
+    var storedPublicKey: String = "BDQgLBzxlDLJzp75a5FLxzJGTxlE04ZcoiMTCsf7NOOelMDr6RJKCy0iBn0U4KPVssgZcn2hC+qA6SKxjhlDODXIiIa507hpf5G6ETLL+cJ2zdAKA03gO7YZRK7/so0e5Q=="
 
     override func setUp() {
-        bobKeyPair = ECC.generateKeyPair()
-        aliceKeyPair = ECC.generateKeyPair()
-
-        guard  let bob = bobKeyPair, let alice = aliceKeyPair else {
-            preconditionFailure("Error: failed to setup key paris")
-        }
-
-        bobSharedSecrect = ECC.generateSharedSecrect(privateKey: bob.privateKey, publicKey: alice.publicKey)
-        aliceSharedSecrect = ECC.generateSharedSecrect(privateKey: alice.privateKey, publicKey: bob.publicKey)
-    }
-
-    func testSharedSecrect() {
-        XCTAssert(bobSharedSecrect != nil && aliceSharedSecrect != nil)
-        XCTAssertEqual(bobSharedSecrect, aliceSharedSecrect)
+        setupKeyPairs()
     }
 
     func testEncryption() {
-        let bobKey = bobSharedSecrect?.generateSecurityKey()
-        let aliceKey = aliceSharedSecrect?.generateSecurityKey()
+        guard let encryptedString: String = ECC.encrypt(testedString, publicKey: storedPublicKey) else { return }
+        guard let decryptedString: String = ECC.decrypt(encryptedString, privateKey: storedPrivateKey) else { return }
 
-        XCTAssert(bobKey != nil && aliceKey != nil)
-        XCTAssertEqual(bobKey, aliceKey)
+        XCTAssert(decryptedString == testedString)
+    }
+
+    func testGenerateKeyPairs() {
+        guard let keyPair = ECC.generateKeyPair() else { return }
+        let someString = "today is tuesday"
+
+        guard let encryptedString: String = ECC.encrypt(someString, publicKey: keyPair.publicKey) else { return }
+        guard let decryptedString: String = ECC.decrypt(encryptedString, privateKey: keyPair.privateKey) else { return }
+
+        XCTAssert(decryptedString == someString)
+    }
+}
+
+extension ECCTests {
+    private func setupKeyPairs() {
+        guard  let randomKeyPair = ECC.generateKeyPair() else { return }
+        publicKey = randomKeyPair.publicKey.toString()
+        privateKey = randomKeyPair.privateKey.toString()
+
+        guard publicKey != nil, privateKey != nil else {
+            preconditionFailure("Error: failed to setup key pairs")
+        }
     }
 }
