@@ -9,14 +9,14 @@
 import Foundation
 
 struct ECC {
-    static func encrypt(_ string: String, publicKey: String, padding: SecPadding = .PKCS1) -> String? {
-        guard let secKey = generateSecureKey(publicKey) else { return nil }
+    static func encrypt(_ string: String, publicKey: String, keyType: KeyType = .EC, padding: SecPadding = .PKCS1) -> String? {
+        guard let secKey = generateSecureKey(publicKey, keyType: keyType) else { return nil }
 
         return encrypt(string, publicKey: secKey, padding: padding)
     }
 
-    static func decrypt(_ base64String: String, privateKey: String, padding: SecPadding = .PKCS1) -> String? {
-        guard let secKey = generateSecureKey(privateKey) else { return nil }
+    static func decrypt(_ base64String: String, privateKey: String, keyType: KeyType = .EC, padding: SecPadding = .PKCS1) -> String? {
+        guard let secKey = generateSecureKey(privateKey, keyType: keyType) else { return nil }
 
         return decrypt(base64String, privateKey: secKey, padding: padding)
     }
@@ -51,11 +51,11 @@ struct ECC {
 
 // MARK: - Factory
 extension ECC {
-    private static func generateSecureKey(_ string: String) -> SecKey? {
+    private static func generateSecureKey(_ string: String, keyType: KeyType = .EC) -> SecKey? {
         guard let data = Data(base64Encoded: string) else { return nil }
 
         var attributes: CFDictionary {
-            return [kSecAttrKeyType: kSecAttrKeyTypeEC,
+            return [kSecAttrKeyType: keyType.cfString(),
                     kSecAttrKeyClass: kSecAttrKeyClassPrivate] as CFDictionary
         }
 
@@ -68,11 +68,11 @@ extension ECC {
         return secKey
     }
 
-    static func generateKeyPair(keySize: KeySize = .bits256) -> KeyPair? {
+    static func generateKeyPair(keySize: KeySize = .bits256, keyType: KeyType = .ECSECPrimeRandom) -> KeyPair? {
         var publicKeyBuffer, privateKeyBuffer: SecKey?
 
         var parameters: CFDictionary {
-            return [kSecAttrKeyType: kSecAttrKeyTypeECSECPrimeRandom,
+            return [kSecAttrKeyType: keyType.cfString(),
                 kSecAttrKeySizeInBits: keySize.rawValue] as CFDictionary
         }
 
@@ -100,10 +100,10 @@ extension SecKey {
         return nil
     }
 
-    func shareSecrect(withPublic publicKey: SecKey) -> CFData? {
+    func shareSecrect(withPublic publicKey: SecKey, keyType: CFString = kSecAttrKeyTypeEC) -> CFData? {
         var error: Unmanaged<CFError>?
         var attributes: CFDictionary {
-            return [kSecAttrKeyType: kSecAttrKeyTypeEC,
+            return [kSecAttrKeyType: keyType,
                 kSecPrivateKeyAttrs: [kSecAttrIsPermanent: false],
                 kSecPublicKeyAttrs: [kSecAttrIsPermanent: false],
                 SecKeyKeyExchangeParameter.requestedSize.rawValue: 32] as CFDictionary
@@ -123,6 +123,23 @@ extension ECC {
     struct KeyPair {
         let privateKey: SecKey
         let publicKey: SecKey
+    }
+
+    enum KeyType {
+        case EC
+        case ECSECPrimeRandom
+        case RSA
+
+        func cfString() -> CFString {
+            switch self {
+            case .EC:
+                return kSecAttrKeyTypeEC
+            case .ECSECPrimeRandom:
+                return kSecAttrKeyTypeECSECPrimeRandom
+            case .RSA:
+                return kSecAttrKeyTypeRSA
+            }
+        }
     }
 
     enum KeySize: Int {
