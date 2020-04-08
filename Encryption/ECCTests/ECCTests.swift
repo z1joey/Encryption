@@ -10,25 +10,30 @@ import XCTest
 @testable import ECC
 
 class ECCTests: XCTestCase {
+    var bobKeyPair: ECC.KeyPair?
+    var aliceKeyPair: ECC.KeyPair?
 
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
+    var bobSharedSecrect: CFData?
+    var aliceSharedSecrect: CFData?
 
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
+    override func setUp() {
+        bobKeyPair = ECC.generateKeyPair()
+        aliceKeyPair = ECC.generateKeyPair()
 
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-    }
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
+        guard  let bob = bobKeyPair, let alice = aliceKeyPair else {
+            preconditionFailure("Error: failed to setup key paris")
         }
+
+        bobSharedSecrect = ECC.generateSharedSecrect(privateKey: bob.privateKey, publicKey: alice.publicKey)
+        aliceSharedSecrect = ECC.generateSharedSecrect(privateKey: alice.privateKey, publicKey: bob.publicKey)
     }
 
+    func testSharedSecrect() {
+        XCTAssert(bobSharedSecrect != nil && aliceSharedSecrect != nil)
+        XCTAssertEqual(bobSharedSecrect, aliceSharedSecrect)
+    }
+
+    func testEncryption() {
+
+    }
 }
