@@ -34,6 +34,10 @@ class ECCTests: XCTestCase {
     }
 
     func testEncryption() {
+        let bobKey = bobSharedSecrect?.generateSecurityKey()
+        let aliceKey = aliceSharedSecrect?.generateSecurityKey()
 
+        XCTAssert(bobKey != nil && aliceKey != nil)
+        XCTAssertEqual(bobKey, aliceKey)
     }
 }

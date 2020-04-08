@@ -60,7 +60,7 @@ struct ECC {
     static func generateSharedSecrect(privateKey: SecKey, publicKey: SecKey, keySize: KeySize = .bits256) -> CFData? {
         var error: Unmanaged<CFError>?
         var attributes: CFDictionary {
-            return [kSecAttrKeyType: kSecAttrKeyTypeECSECPrimeRandom,
+            return [kSecAttrKeyType: kSecAttrKeyTypeEC,
                 kSecPrivateKeyAttrs: [kSecAttrIsPermanent: false],
                 kSecPublicKeyAttrs: [kSecAttrIsPermanent: false],
                 SecKeyKeyExchangeParameter.requestedSize.rawValue: 32,
@@ -78,17 +78,18 @@ struct ECC {
 }
 
 extension CFData {
-    private func generateSecurityKey(keySize: Int = 256) -> SecKey? {
+    func generateSecurityKey(keySize: Int = 256) -> SecKey? {
         var error: Unmanaged<CFError>?
         var attributes: CFDictionary {
-            return [
-                kSecAttrKeyType: kSecAttrKeyTypeEC,
-                kSecPrivateKeyAttrs: [kSecAttrIsPermanent: false],
+            return [kSecAttrKeyType: kSecAttrKeyTypeEC,
+                kSecAttrKeyClass: kSecAttrKeyClassPrivate,
                 kSecAttrKeySizeInBits: keySize] as CFDictionary
         }
 
+//        let base64Key = (self as Data).base64EncodedString()
+//        guard let data = Data(base64Encoded: base64Key) else { return nil }
         guard let key = SecKeyCreateWithData(self, attributes, &error) else {
-            debugPrint("Error: failed to generate security key")
+            debugPrint(error.debugDescription)
             return nil
         }
 

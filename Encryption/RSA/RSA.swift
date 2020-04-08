@@ -55,7 +55,9 @@ extension RSA {
         guard let data = Data(base64Encoded: keyString) else { return nil }
 
         var attributes: CFDictionary {
-            return [kSecAttrKeyType: kSecAttrKeyTypeRSA, kSecAttrKeyClass: kSecAttrKeyClassPrivate, kSecAttrKeySizeInBits: size.rawValue] as CFDictionary
+            return [kSecAttrKeyType: kSecAttrKeyTypeRSA,
+                kSecAttrKeyClass: kSecAttrKeyClassPrivate,
+                kSecAttrKeySizeInBits: size.rawValue] as CFDictionary
         }
 
         var error: Unmanaged<CFError>? = nil
@@ -71,7 +73,8 @@ extension RSA {
         var publicKeyBuffer, privateKeyBuffer: SecKey?
 
         var parameters: CFDictionary {
-            return [kSecAttrKeyType: kSecAttrKeyTypeRSA, kSecAttrKeySizeInBits: keySize.rawValue] as CFDictionary
+            return [kSecAttrKeyType: kSecAttrKeyTypeRSA,
+                kSecAttrKeySizeInBits: keySize.rawValue] as CFDictionary
         }
 
         guard SecKeyGeneratePair(parameters, &publicKeyBuffer, &privateKeyBuffer) == errSecSuccess else {
