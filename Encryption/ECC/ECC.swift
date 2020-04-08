@@ -9,16 +9,16 @@
 import Foundation
 
 struct ECC {
-    static func encrypt(_ string: String, publicKey: String, sizeInBits size: KeySize = .bits256) -> String? {
+    static func encrypt(_ string: String, publicKey: String, padding: SecPadding = .PKCS1) -> String? {
         guard let secKey = generateSecureKey(publicKey) else { return nil }
 
-        return encrypt(string, publicKey: secKey)
+        return encrypt(string, publicKey: secKey, padding: padding)
     }
 
-    static func decrypt(_ base64String: String, privateKey: String, sizeInBits size: KeySize = .bits256) -> String? {
+    static func decrypt(_ base64String: String, privateKey: String, padding: SecPadding = .PKCS1) -> String? {
         guard let secKey = generateSecureKey(privateKey) else { return nil }
 
-        return decrypt(base64String, privateKey: secKey)
+        return decrypt(base64String, privateKey: secKey, padding: padding)
     }
 
     static func encrypt(_ string: String, publicKey: SecKey, padding: SecPadding = .PKCS1) -> String? {
@@ -87,23 +87,9 @@ extension ECC {
 
         return KeyPair(privateKey: privateKey, publicKey: publicKey)
     }
-
-//    static func generateRandomSecureKey(sizeInBits size: KeySize = .bits256) -> SecKey? {
-//        var attributes: CFDictionary {
-//            return [kSecAttrKeyType: kSecAttrKeyTypeECSECPrimeRandom,
-//                    kSecAttrKeySizeInBits: size.rawValue] as CFDictionary
-//        }
-//
-//        var error: Unmanaged<CFError>? = nil
-//        guard let secKey = SecKeyCreateRandomKey(attributes, &error) else {
-//            print(error.debugDescription)
-//            return nil
-//        }
-//
-//        return secKey
-//    }
 }
 
+// MARK: - Define
 extension SecKey {
     func toString() -> String? {
         var error:Unmanaged<CFError>?
@@ -113,9 +99,26 @@ extension SecKey {
         }
         return nil
     }
+
+    func shareSecrect(withPublic publicKey: SecKey) -> CFData? {
+        var error: Unmanaged<CFError>?
+        var attributes: CFDictionary {
+            return [kSecAttrKeyType: kSecAttrKeyTypeEC,
+                kSecPrivateKeyAttrs: [kSecAttrIsPermanent: false],
+                kSecPublicKeyAttrs: [kSecAttrIsPermanent: false],
+                SecKeyKeyExchangeParameter.requestedSize.rawValue: 32] as CFDictionary
+        }
+
+        let algorithm:SecKeyAlgorithm = SecKeyAlgorithm.ecdhKeyExchangeStandardX963SHA256
+        guard let secrect = SecKeyCopyKeyExchangeResult(self, algorithm, publicKey, attributes, &error) else {
+            debugPrint("Error: failed to generate shared secrect")
+            return nil
+        }
+
+        return secrect
+    }
 }
 
-// MARK: - Define
 extension ECC {
     struct KeyPair {
         let privateKey: SecKey
@@ -124,5 +127,11 @@ extension ECC {
 
     enum KeySize: Int {
         case bits256 = 256
+    }
+}
+
+extension ECC.KeyPair {
+    func verify(keyPair: ECC.KeyPair) -> Bool {
+        return privateKey.shareSecrect(withPublic: keyPair.publicKey) == keyPair.privateKey.shareSecrect(withPublic: publicKey)
     }
 }

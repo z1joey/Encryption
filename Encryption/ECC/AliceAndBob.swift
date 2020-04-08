@@ -8,6 +8,7 @@
 
 import Foundation
 
+@available(*, deprecated)
 struct Secrect {
     static func encrypt(_ string: String, shared: SecKey, padding: SecPadding = .PKCS1) -> String? {
         var keySize   = SecKeyGetBlockSize(shared)
